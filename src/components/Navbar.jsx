@@ -1,9 +1,17 @@
 import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"; // Import the logout icon
 
-const Navbar = () => {
+const Navbar = ({ setIsLoggedIn }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn"); // Clear login state from localStorage
+    setIsLoggedIn(false); // Update state to logged out
+    navigate("/"); // Redirect to login page
+  };
+
   return (
     <nav className="p-4 bg-blue-500 text-white flex items-center justify-between h-14">
       <div className="flex items-center gap-12">
@@ -48,18 +56,14 @@ const Navbar = () => {
         </NavLink>
       </div>
 
-      {/* Logout Link */}
-      <NavLink
-        to="/"
-        className={({ isActive }) =>
-          isActive
-            ? "text-lg font-bold underline flex items-center gap-2 px-4 py-2"
-            : "text-lg flex items-center gap-2 px-4 py-2"
-        }
+      {/* Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="text-lg flex items-center gap-2 px-4 py-2"
       >
         <FontAwesomeIcon icon={faSignOutAlt} /> {/* Logout Icon */}
         Logout
-      </NavLink>
+      </button>
     </nav>
   );
 };
