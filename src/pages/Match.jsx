@@ -8,23 +8,27 @@ const Match = () => {
   const [matchedDog, setMatchedDog] = useState(null);
 
   const handleGenerateMatch = async () => {
-    if (favorites.length > 0) {
-      // Fetch the matched dog's ID from the API
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/dogs/match`,
-        favorites,
-        { withCredentials: true }
-      );
-      const matchId = response.data.match;
-
-      // Fetch the details of the matched dog using its ID
-      const dogDetailsResponse = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/dogs`,
-        [matchId],
-        { withCredentials: true }
-      );
-      setMatchedDog(dogDetailsResponse.data[0]);
+    if (favorites.length === 0) {
+      // Show a prompt if there are no favorites
+      alert("You don't have any favorites. Please add some to generate a match.");
+      return;
     }
+
+    // Fetch the matched dog's ID from the API
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/dogs/match`,
+      favorites,
+      { withCredentials: true }
+    );
+    const matchId = response.data.match;
+
+    // Fetch the details of the matched dog using its ID
+    const dogDetailsResponse = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/dogs`,
+      [matchId],
+      { withCredentials: true }
+    );
+    setMatchedDog(dogDetailsResponse.data[0]);
   };
 
   return (
