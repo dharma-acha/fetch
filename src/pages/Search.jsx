@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import DogCard from '../components/DogCard';
-import Pagination from '../components/Pagination';
-import { useFavorites } from '../context/FavoritesContext';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import DogCard from "../components/DogCard";
+import Pagination from "../components/Pagination";
+import { useFavorites } from "../context/FavoritesContext";
 
 const Search = () => {
   const [breeds, setBreeds] = useState([]);
   const [dogs, setDogs] = useState([]);
-  const [selectedBreed, setSelectedBreed] = useState('');
+  const [selectedBreed, setSelectedBreed] = useState("");
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
-  const [sortOrder, setSortOrder] = useState('asc'); // State for sort order
+  const [sortOrder, setSortOrder] = useState("asc");
   const { favorites, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchBreeds = async () => {
+      // Fetch available dog breeds from the API
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/dogs/breeds`,
         { withCredentials: true }
@@ -26,13 +27,19 @@ const Search = () => {
 
   useEffect(() => {
     const fetchDogs = async () => {
+      // Fetch dog IDs based on selected breed, page, and sort order
       const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/dogs/search?breeds=${selectedBreed}&size=10&from=${page * 10}&sort=name:${sortOrder}`,
+        `${
+          import.meta.env.VITE_API_BASE_URL
+        }/dogs/search?breeds=${selectedBreed}&size=10&from=${
+          page * 10
+        }&sort=name:${sortOrder}`,
         { withCredentials: true }
       );
       const dogIds = response.data.resultIds;
       setHasNext(response.data.next !== null);
 
+      // Fetch detailed dog data using the IDs
       const dogDetailsResponse = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/dogs`,
         dogIds,
@@ -41,17 +48,16 @@ const Search = () => {
       setDogs(dogDetailsResponse.data);
     };
     fetchDogs();
-  }, [selectedBreed, page, sortOrder]); // Add sortOrder as a dependency
+  }, [selectedBreed, page, sortOrder]);
 
   return (
     <div className="p-4">
-      {/* Left-aligned heading */}
       <h1 className="text-2xl font-bold mb-8">Search Dogs</h1>
 
-      {/* Centered search bar and sort button */}
+      {/* Search bar and sort button */}
       <div className="flex flex-col items-center justify-center mb-8">
         <div className="flex items-center justify-between w-full">
-          {/* Center the select dropdown */}
+          {/* Breed selection dropdown */}
           <div className="mx-auto">
             <select
               value={selectedBreed}
@@ -67,12 +73,14 @@ const Search = () => {
             </select>
           </div>
 
-          {/* Move the sort button to the right */}
+          {/* Sort button */}
           <button
-            onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+            onClick={() =>
+              setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+            }
             className="p-2 bg-blue-500 text-white rounded"
           >
-            Sort: {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+            Sort: {sortOrder === "asc" ? "Ascending" : "Descending"}
           </button>
         </div>
       </div>

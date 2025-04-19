@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import DogCard from '../components/DogCard';
-import { useFavorites } from '../context/FavoritesContext';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import DogCard from "../components/DogCard";
+import { useFavorites } from "../context/FavoritesContext";
 
 const Favorites = () => {
   const { favorites, toggleFavorite } = useFavorites();
@@ -10,6 +10,7 @@ const Favorites = () => {
   useEffect(() => {
     const fetchFavoriteDogs = async () => {
       if (favorites.length > 0) {
+        // Fetch details of favorite dogs from the API
         const response = await axios.post(
           `${import.meta.env.VITE_API_BASE_URL}/dogs`,
           favorites,

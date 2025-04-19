@@ -14,6 +14,7 @@ const Login = ({ setIsLoggedIn }) => {
     e.preventDefault();
     setError('');
 
+    // Validate input fields
     if (!name.trim()) {
       setError('Name is required');
       return;
@@ -25,13 +26,14 @@ const Login = ({ setIsLoggedIn }) => {
 
     setIsLoading(true);
     try {
+      // Send login request to the API
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
         { name, email },
         { withCredentials: true }
       );
-      setIsLoggedIn(true);
-      navigate('/search');
+      setIsLoggedIn(true); // Update login state
+      navigate('/search'); // Redirect to the search page
     } catch (error) {
       setError('Login failed. Please check your details and try again.');
       console.error('Login failed:', error);

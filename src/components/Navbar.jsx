@@ -1,19 +1,17 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Import the logout icon
+import React from "react";
+import { NavLink, Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"; // Import the logout icon
 
 const Navbar = () => {
   return (
     <nav className="p-4 bg-blue-500 text-white flex items-center justify-between h-14">
-      {/* Left Section: Logo and Navigation Links */}
       <div className="flex items-center gap-12">
-        {/* Logo */}
         <Link to="/search" className="h-full">
           <img
-            src="/Fetch_PrimaryLogo.avif" 
+            src="/Fetch_PrimaryLogo.avif"
             alt="Logo"
-            className="h-12 object-contain rounded-md" // Adjust height to fill the navbar
+            className="h-12 object-contain rounded-md" // Adjust height to fit the navbar
           />
         </Link>
 
@@ -21,7 +19,9 @@ const Navbar = () => {
         <NavLink
           to="/search"
           className={({ isActive }) =>
-            isActive ? 'text-lg font-bold underline px-4 py-2' : 'text-lg px-4 py-2'
+            isActive
+              ? "text-lg font-bold underline px-4 py-2"
+              : "text-lg px-4 py-2"
           }
         >
           Search
@@ -29,7 +29,9 @@ const Navbar = () => {
         <NavLink
           to="/favorites"
           className={({ isActive }) =>
-            isActive ? 'text-lg font-bold underline px-4 py-2' : 'text-lg px-4 py-2'
+            isActive
+              ? "text-lg font-bold underline px-4 py-2"
+              : "text-lg px-4 py-2"
           }
         >
           Favorites
@@ -37,18 +39,22 @@ const Navbar = () => {
         <NavLink
           to="/match"
           className={({ isActive }) =>
-            isActive ? 'text-lg font-bold underline px-4 py-2' : 'text-lg px-4 py-2'
+            isActive
+              ? "text-lg font-bold underline px-4 py-2"
+              : "text-lg px-4 py-2"
           }
         >
           Match
         </NavLink>
       </div>
 
-      {/* Right Section: Logout Link */}
+      {/* Logout Link */}
       <NavLink
         to="/"
         className={({ isActive }) =>
-          isActive ? 'text-lg font-bold underline flex items-center gap-2 px-4 py-2' : 'text-lg flex items-center gap-2 px-4 py-2'
+          isActive
+            ? "text-lg font-bold underline flex items-center gap-2 px-4 py-2"
+            : "text-lg flex items-center gap-2 px-4 py-2"
         }
       >
         <FontAwesomeIcon icon={faSignOutAlt} /> {/* Logout Icon */}

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useFavorites } from '../context/FavoritesContext';
-import DogCard from '../components/DogCard';
+import React, { useState } from "react";
+import axios from "axios";
+import { useFavorites } from "../context/FavoritesContext";
+import DogCard from "../components/DogCard";
 
 const Match = () => {
   const { favorites } = useFavorites();
@@ -9,6 +9,7 @@ const Match = () => {
 
   const handleGenerateMatch = async () => {
     if (favorites.length > 0) {
+      // Fetch the matched dog's ID from the API
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/dogs/match`,
         favorites,
@@ -16,6 +17,7 @@ const Match = () => {
       );
       const matchId = response.data.match;
 
+      // Fetch the details of the matched dog using its ID
       const dogDetailsResponse = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/dogs`,
         [matchId],
@@ -30,7 +32,13 @@ const Match = () => {
       <h1 className="text-2xl font-bold mb-4">Your Match</h1>
       {matchedDog ? (
         <div className="max-w-md mx-auto">
-          <DogCard dog={matchedDog} isFavorite={false} toggleFavorite={() => {}} showButton={false} />
+          {/* Display the matched dog's details */}
+          <DogCard
+            dog={matchedDog}
+            isFavorite={false}
+            toggleFavorite={() => {}}
+            showButton={false}
+          />
         </div>
       ) : (
         <button
