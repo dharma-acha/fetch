@@ -3,6 +3,7 @@ import axios from "axios";
 import DogCard from "../components/DogCard";
 import Pagination from "../components/Pagination";
 import { useFavorites } from "../context/FavoritesContext";
+import { FaCircleNotch } from "react-icons/fa"; 
 
 const Search = () => {
   const [breeds, setBreeds] = useState([]);
@@ -11,6 +12,7 @@ const Search = () => {
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [loading, setLoading] = useState(false); 
   const { favorites, toggleFavorite } = useFavorites();
 
   useEffect(() => {
@@ -27,25 +29,32 @@ const Search = () => {
 
   useEffect(() => {
     const fetchDogs = async () => {
-      // Fetch dog IDs based on selected breed, page, and sort order
-      const response = await axios.get(
-        `${
-          import.meta.env.VITE_API_BASE_URL
-        }/dogs/search?breeds=${selectedBreed}&size=10&from=${
-          page * 10
-        }&sort=name:${sortOrder}`,
-        { withCredentials: true }
-      );
-      const dogIds = response.data.resultIds;
-      setHasNext(response.data.next !== null);
+      setLoading(true); // Set loading to true before fetching
+      try {
+        // Fetch dog IDs based on selected breed, page, and sort order
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_API_BASE_URL
+          }/dogs/search?breeds=${selectedBreed}&size=10&from=${
+            page * 10
+          }&sort=name:${sortOrder}`,
+          { withCredentials: true }
+        );
+        const dogIds = response.data.resultIds;
+        setHasNext(response.data.next !== null);
 
-      // Fetch detailed dog data using the IDs
-      const dogDetailsResponse = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/dogs`,
-        dogIds,
-        { withCredentials: true }
-      );
-      setDogs(dogDetailsResponse.data);
+        // Fetch detailed dog data using the IDs
+        const dogDetailsResponse = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/dogs`,
+          dogIds,
+          { withCredentials: true }
+        );
+        setDogs(dogDetailsResponse.data);
+      } catch (error) {
+        console.error("Error fetching dogs:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching
+      }
     };
     fetchDogs();
   }, [selectedBreed, page, sortOrder]);
@@ -85,21 +94,30 @@ const Search = () => {
         </div>
       </div>
 
-      {/* Dog cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        {dogs.map((dog) => (
-          <DogCard
-            key={dog.id}
-            dog={dog}
-            isFavorite={favorites.includes(dog.id)}
-            toggleFavorite={toggleFavorite}
-          />
-        ))}
-      </div>
+      {/* Loader */}
+      {loading ? (
+        <div className="flex justify-center items-center">
+          <FaCircleNotch className="animate-spin text-blue-500 text-4xl" />
+        </div>
+      ) : (
+        <>
+          {/* Dog cards */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {dogs.map((dog) => (
+              <DogCard
+                key={dog.id}
+                dog={dog}
+                isFavorite={favorites.includes(dog.id)}
+                toggleFavorite={toggleFavorite}
+              />
+            ))}
+          </div>
 
-      {/* Pagination */}
-      {dogs.length > 0 && (
-        <Pagination page={page} setPage={setPage} hasNext={hasNext} />
+          {/* Pagination */}
+          {dogs.length > 0 && (
+            <Pagination page={page} setPage={setPage} hasNext={hasNext} />
+          )}
+        </>
       )}
     </div>
   );
