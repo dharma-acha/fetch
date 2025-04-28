@@ -2,29 +2,14 @@ import React from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"; // Import the logout icon
-import axios from "axios";
-
 
 const Navbar = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      // Call the logout API
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
-
-      // Clear login state and redirect to login page
-      localStorage.removeItem("isLoggedIn");
-      setIsLoggedIn(false);
-      navigate("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-      alert("Failed to log out. Please try again.");
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn"); // Clear login state from localStorage
+    setIsLoggedIn(false); // Update state to logged out
+    navigate("/"); // Redirect to login page
   };
 
   return (
