@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+// This is the Tailwind CSS configuration file (tailwind.config.cjs).
+// It defines how Tailwind CSS should process and apply styles in the project.
 module.exports = {
   content: [
     "./index.html", // Include the main HTML file

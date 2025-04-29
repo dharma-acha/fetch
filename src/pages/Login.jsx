@@ -1,42 +1,52 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import '../App.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosConfig";
+import "../App.css";
 
 const Login = ({ setIsLoggedIn }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      navigate("/search");
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Validate input fields
     if (!name.trim()) {
-      setError('Name is required');
+      setError("Name is required");
       return;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Please enter a valid email address');
+      setError("Please enter a valid email address");
       return;
     }
 
     setIsLoading(true);
     try {
       // Send login request to the API
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
-        { name, email },
-        { withCredentials: true }
-      );
-      setIsLoggedIn(true); // Update login state
-      navigate('/search'); // Redirect to the search page
+      await axiosInstance.post("/auth/login", { name, email });
+
+      // Update login state and redirect
+      localStorage.setItem("isLoggedIn", "true");
+      setIsLoggedIn(true);
+      navigate("/search");
     } catch (error) {
-      setError('Login failed. Please check your details and try again.');
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
+      if (error.response && error.response.status === 401) {
+        setError("Invalid credentials. Please try again.");
+      } else {
+        setError("Login failed. Please check your details and try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -71,12 +81,8 @@ const Login = ({ setIsLoggedIn }) => {
           onChange={(e) => setEmail(e.target.value)}
           className="login-input"
         />
-        <button
-          type="submit"
-          className="login-button"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Logging in...' : 'Login'}
+        <button type="submit" className="login-button" disabled={isLoading}>
+          {isLoading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

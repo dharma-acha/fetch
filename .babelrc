@@ -1,6 +1,18 @@
+// Babel configuration file (.babelrc)
+// This file specifies the presets Babel should use to transpile the code.
+
+// "plugins": Add additional transformations or features to Babel.
 {
   "presets": [
-    "@babel/preset-env", // Transpile modern JavaScript to support older environments
-    "@babel/preset-react" // Transpile JSX and React-specific syntax
+    "@babel/preset-env", // Transpiles modern JavaScript (ES6+).
+    "@babel/preset-react" //Transpiles JSX and React-specific syntax.
+  ],
+  "plugins": [
+    [
+      "transform-vite-meta-env",
+      {
+        "envPrefix": "VITE_"
+      }
+    ]
   ]
 }

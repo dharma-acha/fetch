@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import Search from "./pages/Search";
 import Favorites from "./pages/Favorites";
@@ -8,15 +13,21 @@ import Navbar from "./components/Navbar";
 import { FavoritesProvider } from "./context/FavoritesContext";
 
 const App = () => {
-  // Initialize login state from localStorage to persist user session
   const [isLoggedIn, setIsLoggedIn] = useState(
-    () => localStorage.getItem("isLoggedIn") === "true" || false
+    localStorage.getItem("isLoggedIn") === "true"
   );
 
+  // This useEffect sets a session timeout to automatically log out the user after 1 hour (3600000 ms).
   useEffect(() => {
-    // Sync login state with localStorage whenever it changes
-    localStorage.setItem("isLoggedIn", isLoggedIn);
-  }, [isLoggedIn]);
+    const sessionTimeout = setTimeout(() => {
+      alert("Session expired. Please log in again.");
+      localStorage.removeItem("isLoggedIn");
+      setIsLoggedIn(false);
+      window.location.href = "/";
+    }, 60 * 60 * 1000); // 1 hour
+
+    return () => clearTimeout(sessionTimeout); // Clear timeout on unmount
+  }, [setIsLoggedIn]);
 
   return (
     <FavoritesProvider>
@@ -29,7 +40,11 @@ const App = () => {
           <Route
             path="/"
             element={
-              isLoggedIn ? <Navigate to="/search" /> : <Login setIsLoggedIn={setIsLoggedIn} />
+              isLoggedIn ? (
+                <Navigate to="/search" />
+              ) : (
+                <Login setIsLoggedIn={setIsLoggedIn} />
+              )
             }
           />
 

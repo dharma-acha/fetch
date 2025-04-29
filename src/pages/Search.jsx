@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosConfig";
 import DogCard from "../components/DogCard";
 import Pagination from "../components/Pagination";
 import { useFavorites } from "../context/FavoritesContext";
-import { FaCircleNotch } from "react-icons/fa"; 
+import { FaCircleNotch } from "react-icons/fa";
 
 const Search = () => {
   const [breeds, setBreeds] = useState([]);
@@ -12,16 +12,13 @@ const Search = () => {
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [sortOrder, setSortOrder] = useState("asc");
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const { favorites, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchBreeds = async () => {
       // Fetch available dog breeds from the API
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/dogs/breeds`,
-        { withCredentials: true }
-      );
+      const response = await axiosInstance.get("/dogs/breeds");
       setBreeds(response.data);
     };
     fetchBreeds();
@@ -32,23 +29,16 @@ const Search = () => {
       setLoading(true); // Set loading to true before fetching
       try {
         // Fetch dog IDs based on selected breed, page, and sort order
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_BASE_URL
-          }/dogs/search?breeds=${selectedBreed}&size=10&from=${
+        const response = await axiosInstance.get(
+          `/dogs/search?breeds=${selectedBreed}&size=10&from=${
             page * 10
-          }&sort=name:${sortOrder}`,
-          { withCredentials: true }
+          }&sort=name:${sortOrder}`
         );
         const dogIds = response.data.resultIds;
         setHasNext(response.data.next !== null);
 
         // Fetch detailed dog data using the IDs
-        const dogDetailsResponse = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/dogs`,
-          dogIds,
-          { withCredentials: true }
-        );
+        const dogDetailsResponse = await axiosInstance.post("/dogs", dogIds);
         setDogs(dogDetailsResponse.data);
       } catch (error) {
         console.error("Error fetching dogs:", error);

@@ -6,7 +6,6 @@
 //   plugins: [react()], // Enable React plugin for Vite
 // });
 
-
 // filepath: e:\git repos\fetch-buddy_THP\vite.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";

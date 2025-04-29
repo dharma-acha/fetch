@@ -1,20 +1,44 @@
+// Import React and necessary hooks and components from React Router
+
 import React from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"; // Import the logout icon
+import axiosInstance from "../utils/axiosConfig";
 
+// Receives `setIsLoggedIn` as a prop to manage login state
 const Navbar = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn"); // Clear login state from localStorage
-    setIsLoggedIn(false); // Update state to logged out
-    navigate("/"); // Redirect to login page
+  const handleLogout = async () => {
+    try {
+      // Call the logout API
+      await axiosInstance.post("/auth/logout");
+
+      // Clear login state and redirect to login page
+      localStorage.removeItem("isLoggedIn");
+      setIsLoggedIn(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+
+      // Handle expired token case
+      if (error.response && error.response.status === 401) {
+        alert("Session expired. Please log in again.");
+        localStorage.removeItem("isLoggedIn");
+        setIsLoggedIn(false);
+        navigate("/");
+      } else {
+        alert("Failed to log out. Please try again.");
+      }
+    }
   };
 
   return (
     <nav className="p-4 bg-blue-500 text-white flex items-center justify-between h-14">
+      {/* Left Section: Logo and Navigation Links */}
       <div className="flex items-center gap-12">
+        {/* Logo linking to the search page */}
         <Link to="/search" className="h-full">
           <img
             src="/Fetch_PrimaryLogo.avif"

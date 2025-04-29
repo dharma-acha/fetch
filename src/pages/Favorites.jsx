@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosConfig";
 import DogCard from "../components/DogCard";
 import { useFavorites } from "../context/FavoritesContext";
 
@@ -10,13 +10,13 @@ const Favorites = () => {
   useEffect(() => {
     const fetchFavoriteDogs = async () => {
       if (favorites.length > 0) {
-        // Fetch details of favorite dogs from the API
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/dogs`,
-          favorites,
-          { withCredentials: true }
-        );
-        setFavoriteDogs(response.data);
+        try {
+          // Fetch details of favorite dogs from the API
+          const response = await axiosInstance.post("/dogs", favorites);
+          setFavoriteDogs(response.data);
+        } catch (error) {
+          console.error("Error fetching favorite dogs:", error);
+        }
       } else {
         setFavoriteDogs([]); // Clear the list if no favorites
       }
